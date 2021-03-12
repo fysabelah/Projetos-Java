@@ -12,3 +12,5 @@ A ideia deste é relembrar alguns conceitos básicos, porém essenciais, como, p
 * Gerar um relatório que liste os nomes dos clientes e saldo das contas e a soma do saldo de todas as contas.
 
 O .gitignore para a IDE Eclipe foi criado atraves deste [site](https://www.toptal.com/developers/gitignore).
+
+Clique [aqui](https://drive.google.com/file/d/1x8mVF9be22IHm3ozPrWGGbABqxKJHEgT/view) para ver o vídeo explicando.
