@@ -46,7 +46,4 @@ public class Pessoa {
 	public String getIdentificador() {
 		return null;
 	}
-	
-	
-	
 }
