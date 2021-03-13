@@ -1,5 +1,3 @@
-import javax.swing.JOptionPane;
-
 public class Conta {
 	private Pessoa cliente;
 	private int nrConta;
@@ -35,55 +33,41 @@ public class Conta {
 		this.saldo = saldo;
 	}
 	 
-	protected int temSaldo() {
+	protected boolean temSaldo() {
 		if(this.saldo <= 0) 
-			return(0);
-		return(1);
+			return(false);
+		return(true);
 	}
 	
-	public int sacar(double valorSaque) {
-		if(temSaldo() == 1) {
+	public boolean sacar(double valorSaque) {
+		if(temSaldo()) {
 			debitar(valorSaque);
-			return(1);
+			return(true);
 		}
 		
-		JOptionPane.showMessageDialog(null, "Conta sem saldo",
-					"Saque", JOptionPane.ERROR_MESSAGE);
-		return(0);
+		return(false);
 	}
 	
-	public void debitar(double valor) {
+	public boolean debitar(double valor) {
 		if(valor <= this.saldo) {
 			this.saldo -= valor;
-			
-			JOptionPane.showMessageDialog(null, "Saque de R$ " + valor + " realizado com sucesso\nO saldo atual é de R$ " + this.saldo + ".",
-					"Saque", JOptionPane.INFORMATION_MESSAGE);
+			return(true);
 		}
-		else {
-			JOptionPane.showMessageDialog(null, "O valor do saque solicitado é maior que o valor do saldo",
-					"Saque", JOptionPane.WARNING_MESSAGE);
-		}
+
+		return(false);
 	}
 	
-	public void depositar(double valorDepositar, int flag) {
+	public void depositar(double valorDepositar) {
 		this.saldo += valorDepositar;
-		
-		/*if(flag == 1) {
-			//JOptionPane.showMessageDialog(null, "O saldo atual é no valor de R$ " + this.saldo + ".", "Depósito", JOptionPane.INFORMATION_MESSAGE);
-		}
-		else JOptionPane.showMessageDialog(null, "Transferência realizada com sucesso.",
-				"Depósito", JOptionPane.INFORMATION_MESSAGE);*/
 	}
 	
-	/*Já considero que a conta a receber existe. Logo trato em outra classe*/
-	public void transferir(double valorTrans) {
-		if(sacar(valorTrans) == 1) {
-			depositar(valorTrans, 0);
+	public boolean transferir(Conta c2, double valor) {
+		if(this.sacar(valor)) {
+			c2.depositar(valor);
+			return(true);
 		}
-		else {
-			JOptionPane.showMessageDialog(null, "Conta sem saldo para realização da transferência.",
-					"Transferência", JOptionPane.ERROR_MESSAGE);
-		}
+
+		return(false);
 	}
 
 	@Override

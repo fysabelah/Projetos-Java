@@ -15,9 +15,9 @@ public class ContaEspecial extends Conta{
 		this.limite = limite;
 	}
 
-	protected int temSaldo() {
+	protected boolean temSaldo() {
 		//É permitido saldo negativo
-		return(1);
+		return(true);
 	}
 
 	@Override
