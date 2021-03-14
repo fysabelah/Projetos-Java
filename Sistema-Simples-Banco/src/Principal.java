@@ -195,7 +195,7 @@ class operacoesAuxiliares{
 	public static Pessoa cadastrarCliente() {
 		String[] op = {"Pessoa Física", "Pessoa Jurídica"};
 		
-		int tipo = jOptions.optionDialog(op, "Cadastro de contra", "Tipo");
+		int tipo = jOptions.optionDialog(op, "Tipo", "Cadastro de conta");
 		
 		switch(tipo) {
 			case 0:

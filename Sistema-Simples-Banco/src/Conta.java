@@ -34,27 +34,25 @@ public class Conta {
 	}
 	 
 	protected boolean temSaldo() {
-		if(this.saldo <= 0) 
-			return(false);
-		return(true);
+		if(this.saldo > 0) 
+			return(true);
+		return(false);//Verificar se não influenciou
 	}
 	
 	public boolean sacar(double valorSaque) {
-		if(temSaldo()) {
-			debitar(valorSaque);
-			return(true);
+		if(this.temSaldo()) {
+			if(this.getSaldo() <= 0 || this.getSaldo() >= valorSaque) {
+				//Trantando conta especial
+				debitar(valorSaque);
+				return(true);
+			}
+			else return(false);
 		}
-		
-		return(false);
+		else return(false);
 	}
 	
-	public boolean debitar(double valor) {
-		if(valor <= this.saldo) {
-			this.saldo -= valor;
-			return(true);
-		}
-
-		return(false);
+	public void debitar(double valor) {
+		this.saldo -= valor;
 	}
 	
 	public void depositar(double valorDepositar) {

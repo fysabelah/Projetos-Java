@@ -16,8 +16,12 @@ public class ContaEspecial extends Conta{
 	}
 
 	protected boolean temSaldo() {
-		//É permitido saldo negativo
-		return(true);
+		double saldo = super.getSaldo();
+		if(saldo >= 0) return(true);
+		else {
+			if(saldo*-1 <= limite) return(true);
+			else return(false); //Atingiu o limite especial
+		}
 	}
 
 	@Override
