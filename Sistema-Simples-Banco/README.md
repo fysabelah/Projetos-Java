@@ -3,7 +3,7 @@ A ideia deste é relembrar alguns conceitos básicos, porém essenciais, como, p
 
 ## Digamos que alguns "requisitos" estabelecidos foram:
 * Este banco possui clientes pessoa física e jurídica.
-* Um cliente pode possuir mais de uma conta.
+* Um cliente possui uma conta.
 * As contas podem ser de dois tipos:
   * Conta Especial: onde o cliente possui um limite de crédito pré-aprovado que ele pode sacar a qualquer momento.
   * Conta Poupança: onde o saldo existente será acrescido por uma taxa de remuneração no aniversário mensal da conta.
