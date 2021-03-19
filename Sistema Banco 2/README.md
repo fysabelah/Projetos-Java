@@ -1,5 +1,5 @@
 # Sistema de Banco
-A ideia deste é relembrar alguns conceitos básicos, porém essenciais, como, por exemplo, herança e encapsulamento. Este projeto incremente e/ou alterar o [Banco 1](https://github.com/fysabelah/Projetos-Java/tree/main/Sistema-Simples-Banco). A ideia é ir incrementando cadas vez mais o projeto.
+A ideia deste é relembrar alguns conceitos básicos, porém essenciais. Este projeto incremente e/ou alterar o [Banco 1](https://github.com/fysabelah/Projetos-Java/tree/main/Sistema-Simples-Banco). A ideia é ir incrementando cadas vez mais o projeto.
 
 ## Digamos que alguns "requisitos" estabelecidos foram:
 * Este banco possui clientes pessoa física e jurídica.
