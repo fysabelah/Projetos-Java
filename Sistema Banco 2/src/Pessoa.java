@@ -1,7 +1,11 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pessoa {
 	private int id;
 	private String nome;
 	private String endereco;
+	List<Conta> contas = new ArrayList();
 	
 	public Pessoa(int id, String nome, String endereco) {
 		this.id = id;
@@ -32,12 +36,24 @@ public class Pessoa {
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
 	}
-
-	@Override
-	public String toString() {
-		return "Identificador: " + getId() + "\nNome: " + getNome() + "\nEndreço: " + getEndereco() + "\n";
+	
+	public void adicionarConta(Conta conta) {
+		contas.add(contas.size(), conta);
 	}
 	
+	public List<Conta> getContas() {
+		return contas;
+	}
+
+	public void setContas(List<Conta> contas) {
+		this.contas = contas;
+	}
+	
+	@Override
+	public String toString() {
+		return "ID: " + this.getId() + "\nNome: " + this.getNome() + "\nEndereco: " + this.getEndereco() + "\n";
+	}
+
 	public void setIdentificador(String ident) {
 		
 	}

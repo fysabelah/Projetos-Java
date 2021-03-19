@@ -39,6 +39,6 @@ public class PessoaFisica extends Pessoa{
 	@Override
 	public String toString() {
 		return super.toString() + "CPF: " + getIdentificador() + "\nData de Nascimento: " + getDtNascimento() + "\nGenêro: "
-				+ getGenero() + "\n";
+				+ getGenero() + "\nContas\n" + super.contas.toString();
 	}
 }

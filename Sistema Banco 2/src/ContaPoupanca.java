@@ -1,8 +1,8 @@
 public class ContaPoupanca extends Conta{
 	private double txCorrecao;
 	
-	public ContaPoupanca(Pessoa cliente, int nrConta, double saldo, double txCorrecao) {
-		super(cliente, nrConta, saldo);
+	public ContaPoupanca(int nrConta, double saldo, double txCorrecao) {
+		super(nrConta, saldo);
 		this.txCorrecao = txCorrecao;
 	}
 
@@ -21,7 +21,7 @@ public class ContaPoupanca extends Conta{
 
 	@Override
 	public String toString() {
-		return super.toString() + "Correção: R$" + getTxCorrecao() + "\n";
+		return super.toString() + "Correção: " + getTxCorrecao() + "%\n";
 	}
 	
 }

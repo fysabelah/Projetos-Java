@@ -1,15 +1,6 @@
 public class Conta {
-	private Pessoa cliente;
 	private int nrConta;
 	private double saldo;
-	
-	public Pessoa getCliente() {
-		return cliente;
-	}
-	
-	public void setCliente(Pessoa cliente) {
-		this.cliente = cliente;
-	}
 	
 	public int getNrConta() {
 		return nrConta;
@@ -27,8 +18,7 @@ public class Conta {
 		this.saldo = saldo;
 	}
 
-	public Conta(Pessoa cliente, int nrConta, double saldo) {
-		this.cliente = cliente;
+	public Conta(int nrConta, double saldo) {
 		this.nrConta = nrConta;
 		this.saldo = saldo;
 	}
@@ -41,7 +31,7 @@ public class Conta {
 	
 	public boolean sacar(double valorSaque) {
 		if(this.temSaldo()) {
-			if(this.getSaldo() <= 0 || this.getSaldo() >= valorSaque) {
+			if(this.getSaldo() >= valorSaque) {
 				//Trantando conta especial
 				debitar(valorSaque);
 				return(true);
@@ -70,6 +60,6 @@ public class Conta {
 
 	@Override
 	public String toString() {
-		return cliente.toString() + "\nNumero da Conta: " + nrConta + "\nSaldo: R$ " + saldo + "\n";
+		return "Numero da Conta: " + this.getNrConta() + "\nSaldo: R$ " + this.getSaldo() + "\n";
 	}
 }

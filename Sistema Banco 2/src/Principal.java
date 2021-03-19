@@ -1,26 +1,37 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import javax.swing.JOptionPane;
 
 class Transacoes{
-	static List<Conta> contas = new ArrayList();
+	static List<Pessoa> clientes = new ArrayList();
 	
 	public static void saque() {
-		Conta cliente = operacoesAuxiliares.buscarCliente(contas, "Informe o CPF/CNPJ");
+		Pessoa cliente = operacoesAuxiliares.buscarCliente(clientes, "Informe o CPF/CNPJ");
 		
 		if(cliente == null) {
-			jOptions.dialogError("Este cliente não possui conta", "Saque");
+			jOptions.dialogError("Cliente não cadastrado", "Saque");
 		}
 		else {
-			double valor = Double.parseDouble(jOptions.inputDialog("Informe o valor do saque", "Saque"));
+			Conta conta = operacoesAuxiliares.selecionaContaCliente(cliente, "Selecione a conta");
 			
-			if(cliente.sacar(valor)) {
-				jOptions.dialogInformation("Saque realizado com sucesso\nO saldo atual é de R$ " + cliente.getSaldo(), "Saque");
+			if(conta == null) {
+				jOptions.dialogError("Cliente não possui conta", "Saque");
 			}
 			else {
-				jOptions.dialogError("Conta sem saldo", "Saque");
+				double valor = Double.parseDouble(jOptions.inputDialog("Informe o valor do saque", "Saque"));
+				
+				if(conta.sacar(valor)) {
+					jOptions.dialogInformation("Saque realizado com sucesso\nO saldo atual é de R$ " + conta.getSaldo(), "Saque");
+				}
+				else {
+					jOptions.dialogError("Conta sem saldo", "Saque");
+				}
 			}
 		}
 		
@@ -28,42 +39,62 @@ class Transacoes{
 	}
 	
 	public static void depositar() {
-		Conta cliente = operacoesAuxiliares.buscarCliente(contas, "Informe o CPF/CNPJ");
+		Pessoa cliente = operacoesAuxiliares.buscarCliente(clientes, "Informe o CPF/CNPJ");
 		
 		if(cliente == null) {
-			jOptions.dialogError("Este cliente não possui conta", "Depósito");
+			jOptions.dialogError("Cliente não possui conta", "Depósito");
 		}
 		else {
-			double valor = Double.parseDouble(jOptions.inputDialog("Informe o valor do depósito", "Depósito"));
+			Conta conta = operacoesAuxiliares.selecionaContaCliente(cliente, "Selecione a conta");
 			
-			cliente.depositar(valor);
-			
-			jOptions.dialogInformation("Depósito realizado com sucesso\nO saldo atual é de R$ " + cliente.getSaldo(), "Depósito");
+			if(conta == null) {
+				jOptions.dialogError("Cliente não possui conta", "Depósito");
+			}
+			else {
+				double valor = Double.parseDouble(jOptions.inputDialog("Informe o valor do depósito", "Depósito"));
+				
+				conta.depositar(valor);
+				
+				jOptions.dialogInformation("Depósito realizado com sucesso\nO saldo atual é de R$ " + conta.getSaldo(), "Depósito");
+			}
 		}
 		
 		Menu.menu();
 	}
 
 	public static void transferir() {
-		Conta clienteS = operacoesAuxiliares.buscarCliente(contas, "Informe o CPF/CNPJ da conta A SACAR");
+		Pessoa clienteS = operacoesAuxiliares.buscarCliente(clientes, "Informe o CPF/CNPJ do cliente A SACAR");
 		double valor = Double.parseDouble(jOptions.inputDialog("Informe o valor do saque", "Saque"));
-		Conta clienteR = operacoesAuxiliares.buscarCliente(contas, "Informe o CPF/CNPJ da conta A RECEBER");
+		Pessoa clienteR = operacoesAuxiliares.buscarCliente(clientes, "Informe o CPF/CNPJ do cliente A RECEBER");
 		
-		if(clienteS.transferir(clienteR, valor)) {
-			jOptions.dialogInformation("Transferência realizado com sucesso", "Transferência");
+		if(clienteS == null || clienteR == null) {
+			jOptions.dialogError("Transação não realizada. Verifique os dados.", "Transferência");
 		}
 		else {
-			jOptions.dialogInformation("Conta A SACAR sem saldo disponível", "Transferência");
+			Conta contaS = operacoesAuxiliares.selecionaContaCliente(clienteS, "Selecione a conta A SACAR");
+			Conta contaR = operacoesAuxiliares.selecionaContaCliente(clienteR, "Selecione a conta A RECEBER");
+			
+			if(contaS == null || contaR == null) {
+				jOptions.dialogError("Transação não realizada. Verifique os dados.", "Transferência");
+			}
+			else {
+				if(contaS.transferir(contaR, valor)) {
+					jOptions.dialogInformation("Transferência realizado com sucesso", "Transferência");
+				}
+				else {
+					jOptions.dialogInformation("Conta A SACAR sem saldo disponível", "Transferência");
+				}
+			}
 		}
 		
 		Menu.menu();
 	}
 	
 	public static void visualizar() {
-		Conta cliente = operacoesAuxiliares.buscarCliente(contas, "Informe o CPF/CNPJ");
+		Pessoa cliente = operacoesAuxiliares.buscarCliente(clientes, "Informe o CPF/CNPJ");
 		
 		if(cliente == null) {
-			jOptions.dialogError("Este cliente não cadastrado", "Dados");
+			jOptions.dialogError("Cliente não cadastrado", "Dados");
 		}
 		else {
 			jOptions.dialogInformation(cliente.toString(), "Dados");
@@ -72,127 +103,38 @@ class Transacoes{
 		Menu.menu();
 	}
 	
-	public static void cadastrar() {
-		String[] op1 = {"Especial", "Poupança"};
+	public static void contaAbrir() {
+		Pessoa cliente = operacoesAuxiliares.buscarCliente(clientes, "Informe o CPF/CNPJ");
 		
-		int tipo = jOptions.optionDialog(op1, "Cadastro de conta", "Tipo");
-		
-		Pessoa cliente = operacoesAuxiliares.cadastrarCliente();
-		
-		switch(tipo) {
-			case 0:
-				ContaEspecial ce = new ContaEspecial(
-						cliente,
-						operacoesAuxiliares.identificadores(),
-						0,
-						1000);
-				contas.add(contas.size(), ce);
-				break;
-			case 1:
-				ContaPoupanca cp = new ContaPoupanca(
-						cliente,
-						operacoesAuxiliares.identificadores(),
-						operacoesAuxiliares.saldoInicial(),
-						0.002);
-				contas.add(contas.size(), cp);
-				break;
+		if(cliente == null) {
+			jOptions.dialogError("Cliente não possui cadastrado", "Cadastro de Conta");
 		}
-		
-		Menu.menu();
-	}
-	
-}
-
-class Menu{
-	public static void menu(){
-        String[] op1 = {"Gerenciar Conta", "Gerenciar Cliente", "Sair"};
-        
-        int input = jOptions.optionDialog(op1, "Escolha a opção desejada", "Menu Principal");
-        
-        switch(input) {
-	    	case 0:
-	    		menuConta();
-	    		break;
-	    	case 1:
-	    		menuCliente();
-	    		break;
-	    	case 2:
-	    		operacoesAuxiliares.confirmaSair();
-	    		break;
-	    }
-    }
-	
-	public static void  menuConta(){
-        String[] op1 = {"Saque", "Depósito", "Transferência", "Sair"};
-        
-        int input = jOptions.optionDialog(op1, "Escolha a opção desejada", "Menu Contas");
-
-       switch(input) {
-        	case 0:
-        		Transacoes.saque();
-        		break;
-        	case 1:
-        		Transacoes.depositar();
-        		break;
-        	case 2:
-        		Transacoes.transferir();
-        		break;
-        	case 3:
-        		operacoesAuxiliares.confirmaSair();
-        		break;
-        
-        }
-    }
-	
-	public static void menuCliente(){
-        String[] op1 = {"Cadastrar", "Visualizar", "Sair"};
-        
-        int input = jOptions.optionDialog(op1, "Escolha a opção desejada", "Menu de Clientes");
-        
-        switch(input) {
-	    	case 0:
-	    		Transacoes.cadastrar();
-	    		break;
-	    	case 1:
-	    		Transacoes.visualizar();
-	    		break;
-	    	case 2:
-	    		operacoesAuxiliares.confirmaSair();
-	    		break;
-	    
-	    }
-    }
-}
-
-class operacoesAuxiliares{
-	public static void confirmaSair() {
-		int input = JOptionPane.showConfirmDialog(null, "Deseja continuar?", 
-                "Sair", JOptionPane.YES_NO_OPTION);
-
-        if(input == 0) System.exit(0);
-        else Menu.menu();
-	}
-	
-	public static Conta buscarCliente(List<Conta> contas, String texto) {
-		String aux = jOptions.inputDialog(texto, "Buscar cliente");
-		
-		for(int i = 0; i < contas.size(); i++) {
-			Conta c = contas.get(i);
+		else {
+			String[] op1 = {"Especial", "Poupança"};
 			
-			if(c.getCliente().getIdentificador().compareTo(aux) == 0) {
-				return(c);
+			int tipo = jOptions.optionDialog(op1, "Cadastro de conta", "Tipo");
+			
+			switch(tipo) {
+				case 0:
+					ContaEspecial ce = new ContaEspecial(operacoesAuxiliares.identificadores(),
+							0,
+							1000);
+					cliente.adicionarConta(ce);
+					break;
+				case 1:
+					ContaPoupanca cp = new ContaPoupanca(
+							operacoesAuxiliares.identificadores(),
+							operacoesAuxiliares.saldoInicial(),
+							0.002);
+					cliente.adicionarConta(cp);
+					break;
 			}
 		}
 		
-		return(null);
-	}
-	
-	public static int identificadores() {
-		Random gerador = new Random();
-		return(gerador.nextInt(1000000));
-	}
-	
-	public static Pessoa cadastrarCliente() {
+		Menu.menu();
+    }
+		
+	public static void cadastrarCliente() {
 		String[] op = {"Pessoa Física", "Pessoa Jurídica"};
 		
 		int tipo = jOptions.optionDialog(op, "Tipo", "Cadastro de conta");
@@ -208,7 +150,8 @@ class operacoesAuxiliares{
 						operacoesAuxiliares.obrigaTamanho(11, "CPF", jOptions.inputDialog("CPF", "Cadastro de Cliente")),
 						jOptions.inputDialog("Data de Nascimento", "Cadastro de Cliente"),
 						jOptions.inputOpcoes(ops,"Genêro", "Cadastro de Cliente"));
-				return(pf);
+				clientes.add(clientes.size(), pf);
+				break;
 			case 1:
 				PessoaJuridica pj = new PessoaJuridica(
 						operacoesAuxiliares.identificadores(),
@@ -216,12 +159,246 @@ class operacoesAuxiliares{
 						jOptions.inputDialog("Endereço", "Cadastro de Cliente"),
 						operacoesAuxiliares.obrigaTamanho(14, "CPF", jOptions.inputDialog("CNPJ", "Cadastro de Cliente")),
 						jOptions.inputDialog("Atividade", "Cadastro de Cliente"));
-				return(pj);
+				clientes.add(clientes.size(), pj);
+				break;
+		}
+		
+		Menu.menu();
+	}
+	
+	public static void alterarDados() {
+		Pessoa cliente = operacoesAuxiliares.buscarCliente(clientes, "Informe o CPF/CNPJ");
+		
+		if(cliente == null) {
+			jOptions.dialogError("Cliente não encontrado", "Alterar Dados");
+		}
+		else {
+			cliente.setEndereco(jOptions.inputDialog("Endereço", "Alterar Dados"));
+		}
+		
+		Menu.menu();
+	}
+	
+	public static void relatorios() {
+		String[] op = {"Saldo das Contas", "Total das Contas"};
+		
+		int tipo = jOptions.optionDialog(op, "Tipo", "Gerar relatório");
+		
+		switch(tipo) {
+			case 0:
+				operacoesAuxiliares.relatorioSaldoClientes(clientes);
+				break;
+			case 1:
+				operacoesAuxiliares.relatorioTotalClientes(clientes);
+				break;
+		}
+		
+		Menu.menu();
+	}
+}
+
+class Menu{
+	public static void menu(){
+        String[] op1 = {"Gerenciar Conta", "Gerenciar Cliente", "Sair"};
+        
+        int input = jOptions.optionDialog(op1, "Escolha a opção desejada", "Menu Principal");
+        
+        switch(input) {
+	    	case 0:
+	    		menuConta();
+	    		break;
+	    	case 1:
+	    		menuCliente();
+	    		break;
+	    	default:
+	    		operacoesAuxiliares.confirmaSair();
+	    		break;
+	    }
+    }
+	
+	public static void  menuConta(){
+       String[] op1 = {"Saque", "Depósito", "Transferência", "Abrir Conta","Relatórios", "Voltar", "Sair"};
+        
+       int input = jOptions.optionDialog(op1, "Escolha a opção desejada", "Menu Contas");
+        
+       switch(input) {
+        	case 0:
+        		Transacoes.saque();
+        		break;
+        	case 1:
+        		Transacoes.depositar();
+        		break;
+        	case 2:
+        		Transacoes.transferir();
+        		break;
+        	case 3:
+        		Transacoes.contaAbrir();
+        		break;
+        	case 4:
+        		Transacoes.relatorios();
+        		break;
+        	case 5:
+        		Menu.menu();
+        		break;
+        	default:
+        		operacoesAuxiliares.confirmaSair();
+        		break;
+        
+        }
+    }
+	
+	public static void menuCliente(){
+        String[] op1 = {"Cadastrar", "Visualizar", "Alterar Dados", "Voltar", "Sair"};
+        
+        int input = jOptions.optionDialog(op1, "Escolha a opção desejada", "Menu de Clientes");
+        
+        switch(input) {
+	    	case 0:
+	    		Transacoes.cadastrarCliente();;
+	    		break;
+	    	case 1:
+	    		Transacoes.visualizar();
+	    		break;
+	    	case 2:
+	    		Transacoes.alterarDados();
+	    		break;
+	    	case 3: 
+	    		Menu.menu();
+	    		break;
+	    	default:
+	    		operacoesAuxiliares.confirmaSair();
+	    		break;
+	    
+	    }
+    }
+}
+
+class operacoesAuxiliares{
+	public static void relatorioTotalClientes(List<Pessoa> clientes) {
+		try {
+			File arquivo = new File("SaldoCliente.txt");
+			
+			if(arquivo.exists()) {
+				arquivo.delete();
+				arquivo.createNewFile();
+			}
+			
+			FileWriter arquivoSaldo = new FileWriter(arquivo);
+			PrintWriter gravarArq = new PrintWriter(arquivoSaldo);
+			
+			gravarArq.println("-------------------- Relatório Saldo Total/Cliente --------------------");
+			
+			double saldo;
+			
+			for(int i = 0; i < clientes.size(); i++) {
+				List<Conta> contaCliente = clientes.get(i).contas;
+				saldo = 0;
+				
+				for(int j = 0; j < contaCliente.size(); j++) {
+					saldo += contaCliente.get(j).getSaldo();
+				}
+				
+				gravarArq.println(clientes.get(i).getIdentificador() +" - Saldo R$ " + saldo);
+			}
+			
+			arquivoSaldo.close();
+			gravarArq.close();
+		}catch(IOException ex) {
+			JOptionPane.showMessageDialog(null, "Ocorreu um erro durante a geração do relatório.", "Relatório", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+		}
+	}
+	
+	public static void relatorioSaldoClientes(List<Pessoa> clientes) {
+		try {
+			File arquivo = new File("SaldoContas.txt");
+			
+			if(arquivo.exists()) {
+				arquivo.delete();
+				arquivo.createNewFile();
+			}
+			
+			FileWriter arquivoSaldo = new FileWriter(arquivo);
+			PrintWriter gravarArq = new PrintWriter(arquivoSaldo);
+			
+			gravarArq.println("-------------------- Relatório Cliente Conta/Saldo --------------------");
+			
+			for(int i = 0; i < clientes.size(); i++) {
+				List<Conta> contaCliente = clientes.get(i).contas;
+				
+				gravarArq.println(clientes.get(i).getIdentificador());
+				
+				for(int j = 0; j < contaCliente.size(); j++) {
+					gravarArq.println(contaCliente.get(j).getNrConta() +": " + contaCliente.get(j).getSaldo());
+				}
+			}
+			
+			arquivoSaldo.close();
+			gravarArq.close();
+		}catch(IOException ex) {
+			JOptionPane.showMessageDialog(null, "Ocorreu um erro durante a geração do relatório.", "Relatório", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+		}
+	}
+	
+	public static void confirmaSair() {
+		int input = JOptionPane.showConfirmDialog(null, "Deseja continuar?", 
+                "Sair", JOptionPane.YES_NO_OPTION);
+
+        if(input == 0) System.exit(0);
+        else Menu.menu();
+	}
+	
+	public static Pessoa buscarCliente(List<Pessoa> clientes, String texto) {
+		int tamanho = clientes.size();
+		String aux = jOptions.inputDialog(texto, "Buscar cliente");
+		
+		for(int i = 0; i < tamanho; i++) {
+			if(clientes.get(i).getIdentificador().compareTo(aux) == 0) {
+				return(clientes.get(i));
+			}
 		}
 		
 		return(null);
 	}
 	
+	public static String[] convertendoContaString(Pessoa cliente) {
+		//Considero que já foi verificado se tem conta
+		int tamanho = cliente.getContas().size();
+		String[] retornar = new String[tamanho];
+		
+		for(int i = 0; i < cliente.getContas().size(); i++) {
+			retornar[i] = Integer.toString(cliente.getContas().get(i).getNrConta());
+		}
+		
+		return(retornar);
+	}
+	
+	public static Conta selecionaContaCliente(Pessoa cliente, String text) {
+		if(cliente.getContas().size() == 0) {
+			//Cliente não tem conta cadastrada
+			return(null);
+		}
+		
+		String[] lista = operacoesAuxiliares.convertendoContaString(cliente);
+		
+		String selecionado = jOptions.inputOpcoes(lista,"Contas", text);
+
+		for(int i = 0; i < lista.length; i++) {
+			if(lista[i].compareTo(selecionado) == 0) {
+				return(cliente.getContas().get(i));
+			}
+		}
+		
+		//Aqui tem que vim um try e cath porque se passou no if 1 tem conta
+		return(null);
+	}
+	
+	public static int identificadores() {
+		Random gerador = new Random();
+		return(gerador.nextInt(1000000));
+	}
+
 	public static String obrigaTamanho(int tamanho, String text, String testar) {
 		while(testar.length() < tamanho) {
 			testar = jOptions.inputDialog("Digite novamente o " + text, "Corrigir");

@@ -1,8 +1,8 @@
 public class ContaEspecial extends Conta{
 	private double limite;
 
-	public ContaEspecial(Pessoa cliente, int nrConta, double saldo, double limite) {
-		super(cliente, nrConta, saldo);
+	public ContaEspecial(int nrConta, double saldo, double limite) {
+		super(nrConta, saldo);
 		this.limite = limite;
 	}
 
@@ -14,12 +14,26 @@ public class ContaEspecial extends Conta{
 		this.limite = limite;
 	}
 
+	public boolean sacar(double valorSaque) {
+		if(this.temSaldo()) {
+			if(valorSaque < this.limite) {
+				//Trantando conta especial
+				super.debitar(valorSaque);
+				return(true);
+			}
+			else return(false);
+		}
+		else return(false);
+	}
+	
 	protected boolean temSaldo() {
-		double saldo = super.getSaldo();
-		if(saldo >= 0) return(true);
+		if(super.getSaldo() > 0) return(true);
 		else {
-			if(saldo*-1 <= limite) return(true);
-			else return(false); //Atingiu o limite especial
+			if((super.getSaldo()*-1) < this.limite) {
+				return(true);
+			}
+			
+			return(false);
 		}
 	}
 
