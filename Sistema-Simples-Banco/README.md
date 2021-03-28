@@ -9,5 +9,3 @@ A ideia deste é relembrar alguns conceitos básicos, porém essenciais, como, p
   * Conta Poupança: onde o saldo existente será acrescido por uma taxa de remuneração no aniversário mensal da conta.
 * É possível realizar saques, depósitos e transferências de valores entre contas diferentes.
 * Conta poupança não permite saque que seja menor que o limite existente na conta. Já a conta especial permite.
-
-O .gitignore para a IDE Eclipe foi criado atraves deste [site](https://www.toptal.com/developers/gitignore).
