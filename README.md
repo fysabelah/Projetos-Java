@@ -1,7 +1,12 @@
-# Relembrando conceitos
- Alguns projetos em Java para descontrair. Brincadeira!! É para tentar entender melhor os conceitos mesmo.
+# Sobre
 
-* [Banco](https://github.com/fysabelah/Projetos-Java/tree/main/Sistema-Simples-Banco)
-* [Banco 1](https://github.com/fysabelah/Projetos-Java/tree/main/Sistema%20Banco%202)
+Projeto exemplificando operações CRUD. Neste, não é feito uso de maven ou da API Java para persistênica.
 
-O .gitignore para a IDE Eclipe foi criado atraves deste [site](https://www.toptal.com/developers/gitignore).
+Este irá simular atividades de gerenciamento de uma escola, como, por exemplo, cadastro de professores, alunos, ofertas de disciplinas e matrículas.
+
+Uma evolução deste pode ser encontrada [aqui](https://github.com/fysabelah/crud-school-hibernate).
+
+_Observação_
+Para executar, será necessário adicionar o driver do PostgreSQL. O download por ser feito [aqui](https://jdbc.postgresql.org/download/). As configurações para adição do mesmo pode ser vista abaixo.
+
+![img.png](img.png)
